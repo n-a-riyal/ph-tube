@@ -11,23 +11,35 @@ const videoLoad = async () => {
 
   displayvideos(data.videos);
 }
-const clickfun=async(id)=>{
-  const res = await fetch('https://openapi.programming-hero.com/api/phero-tube/category${id}');
+const clickfun = async (id,id1) => {
+  const res = await fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`);
   const data = await res.json();
- console.log(data)
-//   displayvideos(data.videos);
+ const btnclass=document.getElementsByClassName('riyal')
+ const btnID=document.getElementById(id1)
+ for(const n of btnclass){
+n.classList.remove('bg-red-400', 'text-bold',"text-gray-400")
+
+ }
+
+ btnID.classList.add('bg-red-400', 'text-bold',"text-gray-400","hove:bg-red-400")
+  displayvideos(data.category);
 }
 
+//  const btnColorId={ID:[{id:1},{id:2},{id:3}]}
+ const ID1={id:1}
+ const ID2={id:2}
+ const ID3={id:3}
 function displayBtn(data) {
   const btrContainer = document.getElementById('heder-btn')
+   data[0].id=1
+   data[1].id=2
+   data[2].id=3
   
-  data.map((btnTitle) => {
-    button = document.createElement('button');
-    button.classList = "btn"
-    button.onclick=clickfun(btnTitle.category_id)
-    // button.setAtributes('')
-    button.innerText = btnTitle.category;
-    btrContainer.appendChild(button)
+   console.log(data)
+  data.map((btnTitle) =>{
+    const div = document.createElement('div');
+    div.innerHTML = `<button id="${btnTitle.category_id}"  onclick="clickfun(${btnTitle.category_id},${btnTitle.category_id})" class="btn riyal hover:bg-red-400">${btnTitle.category}<button>`
+    btrContainer.appendChild(div)
 
 
 
@@ -36,8 +48,26 @@ function displayBtn(data) {
 //    {"status":true,"message":"successfully fetched all the videos","videos":[{"category_id":"1001","video_id":"aaaa","thumbnail":"https://i.ibb.co/L1b6xSq/shape.jpg","title":"Shape of You","authors":[{"profile_picture":"https://i.ibb.co/D9wWRM6/olivia.jpg","profile_name":"Olivia Mitchell","verified":""}],"others":
 function displayvideos(vedios) {
   const videoContainer = document.getElementById('videoConatiner')
+  videoContainer.innerHTML="";
+  // console.log(vedios.length)
+  if(vedios.length===0){
+   const div1=document.createElement('div');
+   
+   div1.innerHTML=
+   `<img src="./assets/icon.png"/>
+   <p class="font-bold text-xl mt-4">NO CONTENT HERE ! </p>
+    `
+
+   div1.classList="flex justify-center items-center flex-col"
+   videoContainer.classList.remove('grid')
+   videoContainer.appendChild(div1)
+  }
+  else{
+    videoContainer.classList.add('grid')
+  }
   vedios.map((video) => {
-    // console.log(video)
+    // console.log((isNaN(video?.others?.posted_date)) )
+    
     const div = document.createElement('div');
     div.classList = "card card-compact "
 
@@ -47,7 +77,8 @@ function displayvideos(vedios) {
       src="${video?.
         thumbnail}"
       alt="Shoes" />
-      <div class="absolute right-[20px] bottom-[20px] text-gray-400 text-m font-bold ">${times(video?.others?.posted_date)}</div>
+      ${(video?.others?.posted_date)==="" ? " ":`<div class="absolute right-[20px] bottom-[20px] text-gray-400 text-m font-bold ">${times(video?.others?.posted_date)}</div>`}
+      
          </figure>
   <div class="">
    
@@ -61,7 +92,7 @@ function displayvideos(vedios) {
              <h2 class="font-bold text-xl">${video?.title}</h2>
              <div class="flex gap-4 mb-3 mt-2">
              <p class="font-bold text-gray-300">${video?.authors[0]?.profile_name}</p>
-             ${video?.authors[0]?.verified===true?`<img class="rounded-full w-[20px] odject-cover" src="https://img.icons8.com/?size=100&id=D9RtvkuOe31p&format=png&color=000000">`:""}
+             ${video?.authors[0]?.verified === true ? `<img class="rounded-full w-[20px] odject-cover" src="https://img.icons8.com/?size=100&id=D9RtvkuOe31p&format=png&color=000000">` : ""}
              
              </div>
               <div class='text-gray-400'>${video?.others?.views} views</div>
@@ -78,13 +109,13 @@ function displayvideos(vedios) {
 
 }
 
-function times(t){
-  const Hour=parseInt(t/3600);
-  const remHour=t%3600;
-  const min=parseInt(t/3600);
-  const remmin=t%60;
- return `${Hour}Hours ${min}minutes ${remmin}s ago`
-  
+function times(t) {
+  const Hour = parseInt(t / 3600);
+  const remHour = t % 3600;
+  const min = parseInt(t / 3600);
+  const remmin = t % 60;
+  return `${Hour}Hours ${min}minutes ${remmin}s ago`
+
 
 }
 btnLoad();
